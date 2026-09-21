@@ -169,11 +169,31 @@ function wpadm_flex_preview_hide_posts( $query ) {
 		return;
 	}
 
-	$meta_query   = (array) $query->get( 'meta_query' );
-	$meta_query[] = array(
+	$hide = array(
 		'key'     => '_wpadm_flex_preview_parent',
 		'compare' => 'NOT EXISTS',
 	);
+
+	$existing = $query->get( 'meta_query' );
+
+	/*
+	 * Appending to the caller's array looks equivalent and is not. A meta_query
+	 * carrying 'relation' => 'OR' puts every clause in that array on the same
+	 * side of the OR, so the appended clause does not narrow the result — it
+	 * widens it to everything that is not a preview post, and the caller's own
+	 * filter stops being applied at all.
+	 *
+	 * Nesting keeps whatever relation they asked for intact, inside an AND.
+	 */
+	if ( ! empty( $existing ) && is_array( $existing ) ) {
+		$meta_query = array(
+			'relation' => 'AND',
+			$existing,
+			$hide,
+		);
+	} else {
+		$meta_query = array( $hide );
+	}
 
 	$query->set( 'meta_query', $meta_query );
 }
