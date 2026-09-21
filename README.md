@@ -151,3 +151,35 @@ along with the original.
 - A post that has never been saved has no ID; save a draft and try again.
 - `acf_save_post()` skips `acf/validate_value`, so the preview does not surface
   validation errors.
+
+## Changelog
+
+### 1.0.2
+
+**Fixed:** hiding the preview posts could switch off the caller's own
+`meta_query`.
+
+`pre_get_posts` appended its clause to the array the caller had already set.
+That reads like adding a condition, and is not: a `meta_query` carries its own
+relation, so a caller asking for `'relation' => 'OR'` got the appended clause
+*inside* that OR. The query then meant "your condition OR not a preview post"
+rather than "your condition AND not a preview post" — and since almost nothing
+is a preview post, the second branch matched everything and the caller's filter
+stopped applying at all.
+
+Measured on a `WP_Query` over seven posts, OR-ing two meta keys that do not
+exist anywhere: 0 expected, 7 returned with the plugin active, 0 without it.
+The SQL showed the cause plainly, with `mt2.post_id IS NULL` sitting inside the
+caller's own parentheses.
+
+The clause is now nested inside an explicit `AND`, which leaves whatever
+relation the caller asked for intact. Re-measured after: 0. The preview posts
+are still hidden — eight pages without the filter, seven with it, on two sites
+of a network.
+
+A query that sets no `meta_query`, which is almost all of them, behaves exactly
+as before.
+
+### 1.0.1 and earlier
+
+No changelog was kept.
