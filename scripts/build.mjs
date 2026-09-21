@@ -17,7 +17,17 @@ const execFileAsync = promisify(execFile);
 
 const isProd = process.env.NODE_ENV === "production";
 const root = process.cwd();
-const npx = process.platform === "win32" ? "npx.cmd" : "npx";
+const isWindows = process.platform === "win32";
+const npx = isWindows ? "npx.cmd" : "npx";
+
+/*
+ * Node has refused to spawn a .cmd file directly since the 2024 security
+ * patch, so on Windows this build died with `spawn EINVAL` and nothing else to
+ * go on. A shell is how a .cmd is meant to be launched — ask for one there and
+ * nowhere else. Every argument passed below is a path from the tables in this
+ * file, never user input.
+ */
+const execOptions = { shell: isWindows };
 
 const styles = [
     { in: "src/scss/wpadm.scss", out: "assets/css/wpadm.min.css" },
@@ -45,8 +55,12 @@ async function buildStyle({ in: inputRel, out: outputRel }) {
     // Sass writes an unminified file to temp, postcss minifies it to the final path.
     const tmpPath = outputPath.replace(/\.min\.css$/, ".tmp.css");
 
-    await execFileAsync(npx, ["sass", inputPath, tmpPath, "--no-source-map"]);
-    await execFileAsync(npx, ["postcss", tmpPath, "-o", outputPath]);
+    // Through a shell the arguments are re-parsed, so a path with a space in
+    // it has to say where it ends.
+    const arg = (value) => (isWindows ? `"${value}"` : value);
+
+    await execFileAsync(npx, ["sass", arg(inputPath), arg(tmpPath), "--no-source-map"], execOptions);
+    await execFileAsync(npx, ["postcss", arg(tmpPath), "-o", arg(outputPath)], execOptions);
 
     fs.unlinkSync(tmpPath);
 
