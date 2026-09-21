@@ -117,23 +117,63 @@ body.wpadm-fp-locked {
     border-radius: $wpadm-radius;
 }
 
-.wpadm-fp-size {
+/*
+ * The bar's buttons carry a dashicon and no text. Their names live in `title`
+ * and `aria-label`, so nothing here may reserve room for a label: the box is
+ * sized for the glyph, and every button in the bar is the same size whichever
+ * group it belongs to.
+ */
+.wpadm-fp-size,
+.wpadm-fp-reload,
+.wpadm-fp-close {
 
-    padding: 4px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 28px;
+
+    padding: 0;
+
+    cursor: pointer;
+
+    .dashicons {
+
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+    }
+
+    /*
+     * An icon-only control has no text to fall back on, so losing the focus
+     * ring would leave a keyboard user with nothing at all to go on. Inset,
+     * because the switches sit flush inside their rounded group.
+     */
+    &:focus-visible {
+
+        outline: 2px solid $wpadm-blue;
+        outline-offset: -2px;
+    }
+}
+
+.wpadm-fp-size {
 
     background: $wpadm-white;
     border: 0;
     border-right: 1px solid $wpadm-border;
 
     color: $wpadm-text;
-    font-family: $wpadm-font;
-    font-size: $wpadm-font-size-sm;
-
-    cursor: pointer;
 
     &:last-child {
 
         border-right: 0;
+    }
+
+    &:hover:not(.is-active) {
+
+        background: $wpadm-bg-soft;
+        color: $wpadm-blue;
     }
 
     &.is-active {
@@ -146,31 +186,17 @@ body.wpadm-fp-locked {
 .wpadm-fp-reload,
 .wpadm-fp-close {
 
-    padding: 4px 10px;
-
     background: $wpadm-bg-soft;
     border: 1px solid $wpadm-border;
     border-radius: $wpadm-radius;
 
     color: $wpadm-text;
-    font-family: $wpadm-font;
-    font-size: $wpadm-font-size-sm;
-
-    cursor: pointer;
 
     &:hover {
 
         border-color: $wpadm-blue;
         color: $wpadm-blue;
     }
-}
-
-.wpadm-fp-close {
-
-    padding: 2px 9px;
-
-    font-size: 18px;
-    line-height: 1;
 }
 
 // Iframe stage

@@ -56,6 +56,44 @@
 	}
 
 	/**
+	 * Escapes a translated string for use inside an HTML attribute.
+	 *
+	 * These strings reach the page through attributes now rather than as text,
+	 * and a translator writing an apostrophe or a quote in them should not be
+	 * able to break the markup.
+	 */
+	function attr( value ) {
+		return String( value )
+			.replace( /&/g, '&amp;' )
+			.replace( /"/g, '&quot;' )
+			.replace( /'/g, '&#39;' )
+			.replace( /</g, '&lt;' )
+			.replace( />/g, '&gt;' );
+	}
+
+	/**
+	 * A button that shows a dashicon and says its name to a screen reader.
+	 *
+	 * The label is never visible, so it goes in twice: `title` for the pointer
+	 * and `aria-label` for assistive technology. The icon itself is hidden from
+	 * the accessibility tree — an icon font's glyph is a private-use character
+	 * and announcing it says nothing useful.
+	 *
+	 * @param {string} cls   Class for the button.
+	 * @param {string} icon  Dashicon name, without the `dashicons-` prefix.
+	 * @param {string} label Translated name of the action.
+	 * @param {string} extra Any further attributes, already escaped.
+	 */
+	function iconButton( cls, icon, label, extra ) {
+		return '<button type="button" class="' + cls + '"' +
+			' title="' + attr( label ) + '"' +
+			' aria-label="' + attr( label ) + '"' +
+			( extra || '' ) + '>' +
+			'<span class="dashicons dashicons-' + icon + '" aria-hidden="true"></span>' +
+			'</button>';
+	}
+
+	/**
 	 * Builds the modal once and returns it on every later call.
 	 */
 	function getModal() {
@@ -64,18 +102,18 @@
 		}
 
 		$modal = $(
-			'<div class="wpadm-fp-modal" role="dialog" aria-modal="true" aria-label="' + i18n.title + '">' +
+			'<div class="wpadm-fp-modal" role="dialog" aria-modal="true" aria-label="' + attr( i18n.title ) + '">' +
 				'<div class="wpadm-fp-backdrop"></div>' +
 				'<div class="wpadm-fp-panel">' +
 					'<div class="wpadm-fp-bar">' +
 						'<span class="wpadm-fp-title">' + i18n.title + '</span>' +
 						'<div class="wpadm-fp-sizes">' +
-							'<button type="button" class="wpadm-fp-size is-active" data-width="100%">' + i18n.desktop + '</button>' +
-							'<button type="button" class="wpadm-fp-size" data-width="820px">' + i18n.tablet + '</button>' +
-							'<button type="button" class="wpadm-fp-size" data-width="390px">' + i18n.mobile + '</button>' +
+							iconButton( 'wpadm-fp-size is-active', 'desktop', i18n.desktop, ' data-width="100%" aria-pressed="true"' ) +
+							iconButton( 'wpadm-fp-size', 'tablet', i18n.tablet, ' data-width="820px" aria-pressed="false"' ) +
+							iconButton( 'wpadm-fp-size', 'smartphone', i18n.mobile, ' data-width="390px" aria-pressed="false"' ) +
 						'</div>' +
-						'<button type="button" class="wpadm-fp-reload">' + i18n.reload + '</button>' +
-						'<button type="button" class="wpadm-fp-close" aria-label="' + i18n.close + '">&times;</button>' +
+						iconButton( 'wpadm-fp-reload', 'update', i18n.reload ) +
+						iconButton( 'wpadm-fp-close', 'no-alt', i18n.close ) +
 					'</div>' +
 					'<div class="wpadm-fp-stage">' +
 						'<div class="wpadm-fp-status"></div>' +
@@ -90,7 +128,9 @@
 		$modal.on( 'click', '.wpadm-fp-size', function () {
 			var $btn = $( this );
 
-			$btn.addClass( 'is-active' ).siblings().removeClass( 'is-active' );
+			$btn.addClass( 'is-active' ).attr( 'aria-pressed', 'true' );
+			$btn.siblings().removeClass( 'is-active' ).attr( 'aria-pressed', 'false' );
+
 			$modal.find( '.wpadm-fp-frame' ).css( 'width', $btn.data( 'width' ) );
 		} );
 
