@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Flexible Content Preview
- * Plugin URI:        https://github.com/dakakiki/wpadm
+ * Plugin URI:        https://github.com/dakakiki/wpacfpreview
  * Description:       Preview ACF Flexible Content layouts in the admin before the page is saved.
  * Version:           1.0.2
  * Requires at least: 6.0
