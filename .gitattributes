@@ -1,0 +1,17 @@
+# Normalise line endings in the repository; check out whatever the OS prefers.
+* text=auto eol=lf
+
+*.php   text
+*.scss  text
+*.css   text
+*.js    text
+*.mjs   text
+*.cjs   text
+*.json  text
+*.md    text
+*.pot   text
+
+*.png   binary
+*.jpg   binary
+*.woff2 binary
+*.zip   binary
