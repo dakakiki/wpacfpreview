@@ -1,0 +1,13 @@
+/*
+ * wpadm — WordPress admin UI modules.
+ *
+ * Standalone entry point, kept out of the theme's main stylesheet. It
+ * deliberately avoids theme variables so the module drops into any theme.
+ *
+ * Build: sass assets/scss/wpadm.scss dist/css/wpadm.css
+ *
+ * Partials are imported by path — "@use 'wpadm'" would collide with this
+ * file's own name and sass would report a module loop.
+ */
+
+@use "wpadm/flex-preview";

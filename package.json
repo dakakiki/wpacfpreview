@@ -1,0 +1,24 @@
+{
+    "name": "wpadm",
+    "version": "1.0.1",
+    "private": true,
+    "description": "Flexible Content Preview — ACF Flexible Content preview for the WordPress admin",
+    "type": "module",
+    "scripts": {
+        "build": "node scripts/build.mjs",
+        "build:css": "node scripts/build.mjs css",
+        "build:js": "node scripts/build.mjs js",
+        "watch": "node scripts/watch.mjs",
+        "prod": "cross-env NODE_ENV=production node scripts/build.mjs"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.23",
+        "chokidar": "^5.0.0",
+        "cross-env": "^10.1.0",
+        "cssnano": "^7.1.2",
+        "postcss": "^8.5.6",
+        "postcss-cli": "^11.0.1",
+        "sass": "^1.97.1",
+        "terser": "^5.44.1"
+    }
+}
