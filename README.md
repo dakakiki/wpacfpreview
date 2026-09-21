@@ -154,6 +154,31 @@ along with the original.
 
 ## Changelog
 
+### 1.0.3
+
+**Changed:** the modal bar's buttons show icons instead of words.
+
+Desktop, Tablet, Mobile, Reload and Close were spelled out, so the bar grew
+with the length of the translation and in some languages crowded the title out.
+They now carry dashicons — `desktop`, `tablet`, `smartphone`, `update` and
+`no-alt`. Dashicons was already a dependency of the stylesheet, so no new asset
+ships with this.
+
+The name of each action did not disappear, it stopped being visible: it goes
+into `title` for the pointer and `aria-label` for assistive technology, while
+the glyph itself is `aria-hidden` — an icon font's character is from the
+private use area and reading it aloud says nothing.
+
+The three width switches also carry `aria-pressed` now, kept in step on click.
+Without it a screen reader would go on claiming Desktop was selected, since
+there is no longer any text to infer the state from. Icon-only buttons also get
+a `:focus-visible` outline, having nothing else to fall back on.
+
+**Fixed:** `npm run build` failed on Windows with `spawn EINVAL`. Node has
+refused to spawn a `.cmd` directly since its 2024 security patch, and the build
+calls `sass` and `postcss` through `npx.cmd`. It now asks for a shell on
+Windows, and quotes the paths it passes through it.
+
 ### 1.0.2
 
 **Fixed:** hiding the preview posts could switch off the caller's own
